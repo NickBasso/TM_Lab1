@@ -1,8 +1,13 @@
-setBackground(blur,false,1)
+setBackground(blur,false,0.1)
+
+enter(Rebecca)
 
 Rebecca "Well, well, well!"
 +" What do we have here?!"
 "How long should I wait for you?!" setExpression(Rebecca,Unfriendly_1,3)
-move(Rebecca,0.65,1)
+
+move(Rebecca,0.6,1.0)
+
+exit(Rebecca)
 
 setBackground(null)

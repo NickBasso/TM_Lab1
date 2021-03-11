@@ -71,9 +71,6 @@ public class Character
 
     public void TransitionBody(Sprite sprite, float speed, bool smooth)
     {
-        if (renderers.charRenderer.sprite == sprite)
-            return;
-		
         StopTransitioningBody ();
         transitioningBody = CharacterManager.instance.StartCoroutine (TransitioningBody (sprite, speed, smooth));
     }
@@ -108,9 +105,28 @@ public class Character
 
         while (GlobalF.TransitionImages (ref renderers.charRenderer, ref renderers.allCharRenderers, speed, smooth))
             yield return new WaitForEndOfFrame ();
-
-        Debug.Log ("done");
+        
         StopTransitioningBody ();
+    }
+    
+    public void FadeOut(float speed = 3, bool smooth = false)
+    {
+        Sprite alphaSprite = Resources.Load<Sprite>("images/AlphaOnly");
+
+        LastSprite = renderers.charRenderer.sprite;
+        TransitionBody(alphaSprite, speed, smooth);
+    }
+
+    Sprite LastSprite = null; 
+
+    public void FadeIn(float speed = 3, bool smooth = false)
+    {
+        Debug.Log(LastSprite);
+        Debug.Log(renderers.charRenderer.sprite);
+        if (LastSprite != null)
+        {
+            TransitionBody(LastSprite, speed, smooth);
+        }
     }
 
     #endregion
@@ -133,7 +149,7 @@ public class Character
 
         enabled = enabledOnStart;
     }
-
+    
     [System.Serializable]
     public class Renderers
     {
@@ -143,5 +159,5 @@ public class Character
     }
 
     public Renderers renderers = new Renderers();
-    
 }
+

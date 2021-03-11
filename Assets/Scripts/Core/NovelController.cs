@@ -1,14 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using Assets.Scripts.Core;
 using UnityEngine;
 
 public class NovelController : MonoBehaviour
 {
     private List<string> data = new List<string>();
-
+    
     int progress = 0;
+
+    CultureInfo culture = (CultureInfo)CultureInfo.InvariantCulture.Clone();
     // Start is called before the first frame update
     void Start()
     {
@@ -106,6 +109,12 @@ public class NovelController : MonoBehaviour
             case "setExpression":
                 Command_ChangeCharacterExpression(data[1]);
                 break;
+            case "enter":
+                Command_Enter(data[1]);
+                break;
+            case "exit":
+                Command_Exit(data[1]);
+                break;
         }
     }
 
@@ -145,24 +154,71 @@ public class NovelController : MonoBehaviour
     {
         string[] parameters = data.Split(',');
         string character = parameters[0];
-        float locationX = float.Parse(parameters[1]);
-        float locationY = float.Parse(parameters[2]);
+        
+        float locationX = float.Parse(parameters[1], culture);
+        float locationY = float.Parse(parameters[2], culture);
 
         Character c = CharacterManager.instance.GetCharacter(character);
+        
+        c.FadeOut(0.1f);
         c.MoveTo(new Vector2(locationX, locationY));
+        if (!c.enabled)
+        {
+            c.renderers.charRenderer.color = new Color(1, 1, 1, 0);
+            c.enabled = true;
+            
+            c.TransitionBody(c.renderers.charRenderer.sprite, 0.1f, false);
+        }
+        else
+        {
+            print("got here");
+            c.FadeIn(0.1f);
+        }
     }
 
     void Command_ChangeCharacterExpression(string data)
     {
-        print("got here");
         string[] parameters = data.Split(',');
         string character = parameters[0];
         string expression = parameters[1];
-        float speed = parameters.Length >= 3 ? float.Parse(parameters[2]) : 2f;
+        float speed = parameters.Length >= 3 ? float.Parse(parameters[2], culture) : 2f;
         bool smooth = parameters.Length == 4 && bool.Parse(parameters[3]);
 
         Character c = CharacterManager.instance.GetCharacter(character);
         c.TransitionBody(c.GetSprite(expression), speed, smooth);
 
+    }
+
+    void Command_Exit(string data)
+    {
+        string[] parameters = data.Split(',');
+        string character = parameters[0];
+        float speed = parameters.Length >= 3 ? float.Parse(parameters[1], culture) : 3f;
+        bool smooth = parameters.Length == 4 && bool.Parse(parameters[2]);
+
+        Character c = CharacterManager.instance.GetCharacter(character);
+        c.FadeOut(speed, smooth);
+    }
+    
+    void Command_Enter(string data)
+    {
+        string[] parameters = data.Split(',');
+        string character = parameters[0];
+        float speed = parameters.Length >= 3 ? float.Parse(parameters[1], culture) : 1f;
+        bool smooth = parameters.Length == 4 && bool.Parse(parameters[2]);
+
+        Character c = CharacterManager.instance.GetCharacter(character, enabledCreatedCharacterOnStart:false);
+
+        if (!c.enabled)
+        {
+            c.renderers.charRenderer.color = new Color(1, 1, 1, 0);
+            c.enabled = true;
+            
+            c.TransitionBody(c.renderers.charRenderer.sprite, speed, smooth);
+        }
+        else
+        {
+            c.FadeIn(speed, smooth);
+        }
     }
 }

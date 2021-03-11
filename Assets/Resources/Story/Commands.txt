@@ -5,6 +5,7 @@ Each line may have multiple actions. Actions on the same line should be delimite
 #Make a character speal
 	characterName "dialogue"
 	+symbol makes dialogue additive to continue from last segment.
+	|symbol inside dialog line for moving to the new line.
 	No name before dialogue means use last speaker.
 	
 #Change character expressions
@@ -24,3 +25,7 @@ Each line may have multiple actions. Actions on the same line should be delimite
 	*optional parameters (order of parameters does not matter)
 		1. speed of transition
 		2. transition smoothing
+
+#Show and Hide cahracter
+	enter(characterName)
+	exit(characterName)

@@ -51,7 +51,6 @@ public class Character
     public Sprite GetSprite(string emotion)
     {
         Sprite sprite = Resources.Load<Sprite>("images/Characters/"+characterName+"/"+characterName+"_"+emotion);
-        Debug.Log("images/Characters/"+characterName+"/"+characterName+"_"+emotion);
         return sprite;
     }
 
@@ -102,7 +101,7 @@ public class Character
             image.color = GlobalF.SetAlpha (image.color, 0f);
             image.sprite = sprite;
         }
-
+        
         while (GlobalF.TransitionImages (ref renderers.charRenderer, ref renderers.allCharRenderers, speed, smooth))
             yield return new WaitForEndOfFrame ();
         

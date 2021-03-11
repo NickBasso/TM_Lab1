@@ -6,6 +6,15 @@ Rebecca "Well, well, well!"
 +" What do we have here?!"
 "How long should I wait for you?!" setExpression(Rebecca,Unfriendly_1,3)
 
+choice
+{
+Rebecca "Wow, it was nasty|"
+narrator +"|1."
+ch "Yeah, you are absolutely right"
++"|2."
+ch narrator"No, it wasnt. It is not something special for these places"
+}
+
 move(Rebecca,0.6,1.0)
 
 exit(Rebecca)

@@ -7,6 +7,7 @@ public class GlobalF : MonoBehaviour
 {
     public static bool TransitionImages(ref Image activeImage, ref List<Image> allImages, float speed, bool smooth)
     {
+
         bool anyValueChanged = false;
 
         speed *= Time.deltaTime;

@@ -4,12 +4,15 @@ using System.Collections.Generic;
 using System.Globalization;
 using Assets.Scripts.Core;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class NovelController : MonoBehaviour
 {
     private List<string> data = new List<string>();
     
     int progress = 0;
+    bool haveToMakeChoice = false;
+    private List<string> choiceLines = new List<string>();
 
     CultureInfo culture = (CultureInfo)CultureInfo.InvariantCulture.Clone();
     // Start is called before the first frame update
@@ -22,11 +25,28 @@ public class NovelController : MonoBehaviour
     void Update()
     {
         //testing
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        if (Input.GetKeyDown(KeyCode.RightArrow) && !haveToMakeChoice)
         {
             HandleLine(data[progress]);
             progress++;
         }
+        else if (haveToMakeChoice)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                HandleChoice(choiceLines[0]);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                HandleChoice(choiceLines[1]);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                if (choiceLines.Count == 3)
+                    HandleChoice(choiceLines[2]);
+            }
+        }
+
     }
 
     public void LoadChapterFile(string filename)
@@ -38,6 +58,32 @@ public class NovelController : MonoBehaviour
 
     void HandleLine(string line)
     {
+        data[progress] = data[progress].Replace("***", "\r\n");
+        if (line.StartsWith("choice"))
+        {
+            progress++;
+            haveToMakeChoice = true;
+            while (!data[progress].Contains("}"))
+            {
+                if (data[progress].Contains("{"))
+                {
+                    progress++;
+                    continue;
+                }
+
+                if (!data[progress].StartsWith("ch"))
+                    HandleLine(data[progress]);
+                else
+                {
+                    data[progress] = data[progress].Substring(3, data[progress].Length-3);
+                    choiceLines.Add(data[progress]);
+                }
+                progress++;
+            }
+
+            return;
+        }
+
         string[] dialogueAndActions = line.Split('"');
 
         if (dialogueAndActions.Length == 3)
@@ -118,6 +164,13 @@ public class NovelController : MonoBehaviour
         }
     }
 
+    void HandleChoice(string line)
+    {
+        haveToMakeChoice = false;
+        choiceLines.Clear();
+        HandleLine(line);
+    }
+
     void Command_SetLayerImage(string data, LayersController.LAYER layer)
     {
         string texName = data.Contains(",") ? data.Split(',')[0] : data;
@@ -145,8 +198,7 @@ public class NovelController : MonoBehaviour
                 }
             }
         }
-        print(texName);
-        Debug.Log(tex);
+        
         layer.TransitionToTexture(tex, spd, smooth);
     }
 
@@ -160,20 +212,21 @@ public class NovelController : MonoBehaviour
 
         Character c = CharacterManager.instance.GetCharacter(character);
         
-        c.FadeOut(0.1f);
+        c.FadeOut(300);
         c.MoveTo(new Vector2(locationX, locationY));
         if (!c.enabled)
         {
             c.renderers.charRenderer.color = new Color(1, 1, 1, 0);
             c.enabled = true;
             
-            c.TransitionBody(c.renderers.charRenderer.sprite, 0.1f, false);
+            c.TransitionBody(c.renderers.charRenderer.sprite, 1f, false);
         }
         else
         {
-            print("got here");
-            c.FadeIn(0.1f);
+            c.FadeIn(1f);
         }
+        
+        
     }
 
     void Command_ChangeCharacterExpression(string data)

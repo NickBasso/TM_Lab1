@@ -55,12 +55,16 @@ namespace Assets.Scripts.Core
             else
                 targetSpeech = speechText.text + targetSpeech;
             
-            speakerNameText.text = DetermineSpeaker(speaker); //temp
+            speakerNameText.text = DetermineSpeaker(speaker);
+            speakerNamePanel.SetActive(speakerNameText.text != "");
+            
             isWaitingForUserInput = false;
 
             while (speechText.text != targetSpeech)
             {
                 speechText.text += targetSpeech[speechText.text.Length];
+                speechText.text = speechText.text.Contains("|") ? speechText.text.Replace("|", "\n") : speechText.text;
+                targetSpeech = targetSpeech.Contains("|") ? targetSpeech.Replace("|", "\n") : targetSpeech;
                 yield return new WaitForEndOfFrame();
             }
 
@@ -90,6 +94,7 @@ namespace Assets.Scripts.Core
         public class ELEMENTS
         {
             public GameObject speechPanel;
+            public GameObject speakerNamePanel;
             public Text speakerNameText;
             public Text speechText;
         }
@@ -98,13 +103,15 @@ namespace Assets.Scripts.Core
         {
         
         }
-
-
-
+        
         public GameObject speechPanel
         {
             get { return elements.speechPanel; }
         }
+        public GameObject speakerNamePanel
+        {
+            get { return elements.speakerNamePanel; }
+        } 
         public Text speakerNameText
         {
             get { return elements.speakerNameText; }

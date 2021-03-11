@@ -1,0 +1,26 @@
+Commands for Visual Novel.
+Every click event is a separate line in the file. The events below  show how to call actions to make the chapter work.
+Each line may have multiple actions. Actions on the same line should be delimited by a space. Because of this, no value, including filenames, should contain spaces.
+
+#Make a character speal
+	characterName "dialogue"
+	+symbol makes dialogue additive to continue from last segment.
+	No name before dialogue means use last speaker.
+	
+#Change character expressions
+	setExpression(characterName,expressionName)
+	
+	*optional parameters
+	1. speed of transition
+	2. transition smoothing
+
+#Move character on screen
+	move(characterName,targetLocationX,targetLocationY)
+
+#Change Layer Image
+	setBackground(imageName)
+	setForeground(imageName)
+	
+	*optional parameters (order of parameters does not matter)
+		1. speed of transition
+		2. transition smoothing

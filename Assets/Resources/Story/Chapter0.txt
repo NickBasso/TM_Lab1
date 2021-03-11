@@ -1,0 +1,8 @@
+setBackground(blur,false,1)
+
+Rebecca "Well, well, well!"
++" What do we have here?!"
+"How long should I wait for you?!" setExpression(Rebecca,Unfriendly_1,3)
+move(Rebecca,0.65,1)
+
+setBackground(null)
